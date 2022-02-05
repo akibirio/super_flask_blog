@@ -1,4 +1,6 @@
+
 import sqlite3
+from turtle import pos, title
 from webbrowser import get
 from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort  # for the sake of returning HTTP eror 404 if post not found
@@ -53,6 +55,27 @@ def createNewPost():
             return redirect(url_for('index'))
             
     return render_template('createNewPost.html')
+
+#function to edit posts
+@app.route('/<int:id>/editPost', methods=('GET', 'POST'))
+def editPost(id):
+    post = get_post(id)
+
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+
+        if not title:
+            flash("Post Title is Required! ... ")
+        else:
+            conn = get_db_connection()
+            conn.execute('UPDATE posts SET title = ?, content = ? WHERE id = ?', (title, content, id))
+            conn.commit()
+            conn.close()
+
+            return redirect(url_for('index'))
+
+    return render_template('editPost.html', post=post)
 
 
 app.run()
