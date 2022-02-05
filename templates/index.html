@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css')}}">
-    <title>Super Flask Blog</title>
+{% extends 'base.html' %}
 
-</head>
-<body>
-   <h1>Welcome to Super Flask Blog</h1>
-</body>
-</html>
+{% block content %}
+    <h1>{% block title %} Welcome to FlaskBlog {% endblock %}</h1>
+{% endblock %}
