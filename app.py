@@ -1,8 +1,10 @@
 import sqlite3
-from flask import Flask, render_template
+from webbrowser import get
+from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort  # for the sake of returning HTTP eror 404 if post not found
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'ayub12'
 
 
 def get_db_connection():
@@ -31,5 +33,26 @@ def index():
 def post(post_id):
     post = get_post(post_id)
     return render_template('post.html', post=post)
+
+
+# function that will render a template that displays a form you can fill in to create a new blog post
+@app.route('/createnewpost', methods=('GET', 'POST'))
+def createNewPost():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+
+        if not title:
+            flash('Post Title Required! ...')
+        else:
+            conn = get_db_connection()
+            conn.execute('INSERT INTO posts (title, content) VALUES (?, ?)', (title, content))
+            conn.commit()
+            conn.close()
+
+            return redirect(url_for('index'))
+            
+    return render_template('createNewPost.html')
+
 
 app.run()
